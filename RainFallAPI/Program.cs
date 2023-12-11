@@ -14,8 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://localhost:3000");
 builder.Configuration.AddJsonFile("appsettings.json");
 
-// Read the API version from configuration
-var apiVersion = "v1";//builder.Configuration["ApiVersion"];
+var configuration = builder.Configuration;
+var apiVersion = configuration["ApiVersion"];
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -23,7 +23,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc(apiVersion, new OpenApiInfo { Title = "TEST RAINFALL", Version = apiVersion });
+    c.SwaggerDoc(apiVersion, new OpenApiInfo { 
+        Version = apiVersion,
+        Title = configuration["Title"],
+        Description = configuration["Description"],
+        Contact = new OpenApiContact
+        {
+            Name = configuration["Name"],
+            Url = new Uri(configuration["Uri"]),
+            Email = configuration["Email"]
+        }
+     });
 });
 builder.Services.AddScoped<Common.Interfeces.IRainfallService, RainFallAPI.Services.RainfallService>();
 
