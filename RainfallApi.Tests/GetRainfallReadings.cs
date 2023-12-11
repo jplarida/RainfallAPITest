@@ -7,12 +7,21 @@ using Common.Interfeces;
 using RainFallAPI.Services;
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 
 namespace RainFallAPI.Tests
 {
     [TestFixture]
     public class RainfallControllerTests
     {
+        private readonly ILogger<RainfallController> logger; // Declare logger as a class-level field
+
+        public RainfallControllerTests()
+        {
+            // Initialize logger in the constructor
+            logger = new Mock<ILogger<RainfallController>>().Object;
+        }
+
         [Test]
         public void GetRainfallReadings_ReturnsOkResultWithReadings()
         {
@@ -20,13 +29,13 @@ namespace RainFallAPI.Tests
             var mockRainFallAPI = new Mock<IRainfallService>();
             var controller = new RainfallController(mockRainFallAPI.Object);
 
-            var stationId = "1";
+            var stationId = "003";
             var count = 10;
 
             var expectedReadings = new List<RainfallReading>
             {
-                new RainfallReading { DateMeasured = DateTime.Now, AmountMeasured = 5.6M },
-                new RainfallReading { DateMeasured = DateTime.Now.AddDays(-1), AmountMeasured = 3.2M }
+                new RainfallReading { Id = 3,StationId = "003", DateMeasured = DateTime.Now.AddDays(-1), AmountMeasured = 7.45m },
+                new RainfallReading { Id = 6,StationId = "003", DateMeasured = DateTime.Now.AddDays(-1), AmountMeasured = 18.5m }
             };
 
             mockRainFallAPI.Setup(service => service.GetRainfallReadings(stationId, count))
@@ -36,12 +45,13 @@ namespace RainFallAPI.Tests
             var result = controller.GetRainfallReadings(stationId, count) as ObjectResult;
 
             // Assert
+            logger.LogInformation($"GetRainfallReadings_ReturnsOkResultWithReadings Result: {result}");
             Assert.IsNotNull(result);
-            Assert.AreEqual(200, result.StatusCode);
+            Assert.That(result.StatusCode, Is.EqualTo(200));
 
             var responseData = result.Value as RainfallReadingResponse;
             Assert.IsNotNull(responseData);
-            Assert.AreEqual(expectedReadings, responseData.Readings);
+            Assert.That(responseData.Readings, Is.EqualTo(expectedReadings));
         }
 
         [Test]
@@ -51,7 +61,7 @@ namespace RainFallAPI.Tests
             var mockRainFallAPI = new Mock<IRainfallService>();
             var controller = new RainfallController(mockRainFallAPI.Object);
 
-            var stationId = "2";
+            var stationId = "113";
             var count = 10;
 
             mockRainFallAPI.Setup(service => service.GetRainfallReadings(stationId, count))
@@ -61,12 +71,13 @@ namespace RainFallAPI.Tests
             var result = controller.GetRainfallReadings(stationId, count) as ObjectResult;
 
             // Assert
+            logger.LogInformation($"GetRainfallReadings_ReturnsNotFoundForEmptyReadings Result: {result}");
             Assert.IsNotNull(result);
-            Assert.AreEqual(404, result.StatusCode);
+            Assert.That(result.StatusCode, Is.EqualTo(404));
 
             var errorResponse = result.Value as ErrorResponse;
             Assert.IsNotNull(errorResponse);
-            Assert.AreEqual("No readings found for the specified stationId", errorResponse.Message);
+            Assert.That(errorResponse.Message, Is.EqualTo("No readings found for the specified stationId"));
         }
     }
 }

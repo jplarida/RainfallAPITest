@@ -9,5 +9,6 @@ namespace Common.Interfeces
     public interface IRainfallService
     {
         List<RainfallReading> GetRainfallReadings(string stationId, int count);
+        List<RainfallReading> TestDatabaseQuery();
     }
 }
