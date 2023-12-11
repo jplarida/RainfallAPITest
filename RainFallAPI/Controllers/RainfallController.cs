@@ -4,17 +4,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Common.Models;
+using Common.Interfeces;
 using RainFallAPI.Services;
 
 namespace RainFallAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class RainfallController : ControllerBase
     {
-        private readonly RainfallService _rainfallService;
+        private readonly IRainfallService _rainfallService;
 
-        public RainfallController(RainfallService rainfallService)
+        public RainfallController(IRainfallService rainfallService)
         {
             _rainfallService = rainfallService;
         }
