@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-
+using Common.Models;
 namespace Common.Services
 {
     public class AppDbContext : DbContext

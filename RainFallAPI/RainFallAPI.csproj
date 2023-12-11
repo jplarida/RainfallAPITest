@@ -6,14 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <!-- ... other references ... 
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web.Extensions" Version="6.0.0" />-->
     <PackageReference Include="Microsoft.AspNetCore.mvc" Version="2.2.0" />
-    <!-- <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.9">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference> -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.9" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <ProjectReference Include="..\Common\Common.csproj" />
   </ItemGroup>
   
