@@ -32,6 +32,11 @@ namespace RainFallAPI.Controllers
 
             return Ok(new RainfallReadingResponse { Readings = readings });
         }
-        
+        [HttpGet("test")]
+        public IActionResult TestDatabaseQuery()
+        {
+            var readings = _rainfallService.TestDatabaseQuery();
+            return Ok(new RainfallReadingResponse { Readings = readings });
+        }
     }
 }

@@ -2,19 +2,35 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+using Common.Services;
+using Common.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://localhost:3000");
 
-// Add services to the container as well as external services since we are on distributed microserviced system.
-builder.Services.AddSingleton<Common.Interfeces.IRainfallService, RainFallAPI.Services.RainfallService>();
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseInMemoryDatabase("RainfallDatabase"); // Database name
+});
 
-// Configure the services and controllers
+builder.Services.AddScoped<Common.Interfeces.IRainfallService, RainFallAPI.Services.RainfallService>();
+
 builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var dbContext = services.GetRequiredService<AppDbContext>();
+
+    dbContext.Database.EnsureCreated(); // Ensure the database is created
+
+    // Seed sample data if needed
+    SampleData.Initialize(dbContext);
+}
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -22,10 +38,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 
-// UseEndpoints should be used instead of MapControllers
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-});
+app.UseEndpoints(endpoints => endpoints.MapControllers());
 
 app.Run();
